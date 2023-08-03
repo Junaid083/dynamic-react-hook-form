@@ -1,11 +1,12 @@
 import "./App.css";
-import Form from "./components/Form";
+import Form from "./componenet/Form";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header"></header>
-      <Form />
+      <header className="App-header">
+        <Form />
+      </header>
     </div>
   );
 }

@@ -1,123 +1,159 @@
 import React from "react";
+import Widget from "./Widget";
 import { useForm, Controller } from "react-hook-form";
 
 const Form = () => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    mode: "onChange",
+  const { control, handleSubmit } = useForm();
+  const dynamicForm = {
+    firstName: {
+      label: "First Name",
+      type: "text",
+      placeholder: "Enter your first name",
+      defaultValue: "",
+      rules: {
+        required: true,
+      },
+    },
+    lastName: {
+      label: "Last Name",
+      type: "text",
+      placeholder: "Enter your last name",
+      defaultValue: "",
+      rules: {
+        required: true,
+      },
+    },
+    gender: {
+      label: "Gender",
+      type: "radio",
+      options: ["male", "female"],
+      defaultValue: "",
+      rules: {
+        required: true,
+      },
+    },
+    profession: {
+      label: "Profession",
+      type: "dropdown",
+      options: ["Front-end Developer", "Back-end Developer", "Devops Engineer"],
+      defaultValue: "",
+      rules: {
+        required: true,
+      },
+    },
+    agree: {
+      type: "checkbox",
+      label: "",
+      checkboxLabel: "I hereby agree to the terms.",
+      defaultValue: false,
+      rules: {
+        required: true,
+      },
+    },
+  };
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
+  const Input = ({ value, onChange, type, options, ...rest }) => {
+    switch (type) {
+      case "text":
+        return (
+          <input
+            className={`form-input block w-96 h-10 px-4 mt-1 mb-2 border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 flex-grow-1 focus:border-blue-500 focus:ring-0 sm:text-sm rounded-md `}
+            type="text"
+            value={value}
+            onChange={onChange}
+            {...rest}
+          />
+        );
+      case "radio":
+        return options.map((option, index) => (
+          <label className="px-2" key={index}>
+            <input
+              className="w-4 h-4text-blue-600 border-gray-300 form-radio focus:ring-blue-500"
+              type="radio"
+              value={option}
+              checked={value === option}
+              onChange={(e) => onChange(e.target.value)}
+              {...rest}
+            />
+            {option}
+          </label>
+        ));
+      case "dropdown":
+        return (
+          <select
+            className={`block w-full h-8 mb-4 border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 form-select focus:ring-blue-500 focus:border-blue-500 focus:ring-0 sm:text-sm rounded-md`}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            {...rest}
+          >
+            <option value="">Select an option</option>
+            {options.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        );
+      case "checkbox":
+        return (
+          <label>
+            <input
+              type="checkbox"
+              checked={value}
+              className="w-4 h-4 mb-4 text-blue-600 border-gray-300 rounded form-checkbox focus:ring-blue-500"
+              onChange={(e) => onChange(e.target.checked)}
+              {...rest}
+            />
+            {rest.checkboxLabel}
+          </label>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const formInputs = Object.keys(dynamicForm).map((e) => {
+    const { rules, defaultValue, label, type, options } = dynamicForm[e];
+
+    return (
+      <section key={e}>
+        <label>{label}</label>
+        <Controller
+          name={e}
+          control={control}
+          rules={rules}
+          defaultValue={defaultValue}
+          render={({ field }) => (
+            <div>
+              <Input
+                type={type}
+                options={options}
+                {...field}
+                {...dynamicForm[e]}
+              />
+            </div>
+          )}
+        />
+      </section>
+    );
   });
-  const validationRules = {
-    email: {
-      required: "Product Name is required",
-    },
-    Password: {
-      required: "Password is required",
-    },
-    Comments: {
-      required: "Comments is required",
-    },
-  };
-  const onSubmit = async (data) => {
-    console.log("Data", data);
-  };
+
   return (
-    <>
-      <h1>Form Here</h1>
-      <form onSubmit={handleSubmit(onSubmit)} method="POST">
-        <Controller
-          name="Email"
-          control={control}
-          rules={validationRules.email}
-          render={({ field }) => (
-            <>
-              {/* <Label left="text-left">Email</Label> */}
-              <lable left="text-left">Email</lable>
-
-              <input
-                placeholder="Email"
-                type="email"
-                {...field}
-                value={field.value || ""}
-                className={`form-input block w-full mt-1 mb-2 border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 flex-grow-1 focus:border-blue-500 focus:ring-0 sm:text-sm rounded-md ${
-                  errors.email ? "border-red-500" : ""
-                }`}
-              />
-              {errors.email && (
-                <span className="text-red-500 text-sm">Email is required </span>
-              )}
-            </>
-          )}
-        />
-        <Controller
-          name="Password"
-          control={control}
-          rules={validationRules.Password}
-          render={({ field }) => (
-            <>
-              <lable left="text-left">Password</lable>
-              <input
-                placeholder="Password"
-                type="password"
-                {...field}
-                value={field.value || ""}
-                className={`form-input block w-full mt-1 mb-2 border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 flex-grow-1 focus:border-blue-500 focus:ring-0 sm:text-sm rounded-md ${
-                  errors.Password ? "border-red-500" : ""
-                }`}
-              />
-              {errors.Password && (
-                <span className="text-red-500 text-sm">
-                  Password is required
-                </span>
-              )}
-            </>
-          )}
-        />
-
-        <Controller
-          name="Comments"
-          control={control}
-          rules={validationRules.Comments}
-          render={({ field }) => (
-            <>
-              <lable left="text-left">Comments</lable>
-              <textarea
-                placeholder="Comments"
-                // type="text"
-                {...field}
-                className={`form-input block w-full h-40 mt-1 mb-2 border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 flex-grow-1 focus:border-blue-500 focus:ring-0 sm:text-sm rounded-md ${
-                  errors.description ? "border-red-500" : ""
-                }`}
-              />
-              {errors.Comments && (
-                <span className="text-red-500 text-sm">
-                  Comments are required
-                </span>
-              )}
-            </>
-          )}
-        />
-
-        <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-          <button
-            type="button"
-            className="px-8 py-2 text-xs font-bold text-blue-500 dark:text-white uppercase bg-transparent dark:hover:bg-gray-800 border border-blue-500 dark:border-white hover:text-blue-700 dark:hover:text-white hover:border-blue-700 dark:hover:border-white rounded-md"
-            // onClick={() => closeModel(false)}
-          >
-            Cancel
-          </button>
-
-          <button
-            className="inline-flex justify-center px-3 py-2 ml-3 text-sm font-medium text-white bg-blue-500 border border-transparent shadow-sm rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            // disabled={isLoading}
-          >
-            Submit
-          </button>
-        </div>
+    <Widget title="React Hook Form" description={<span></span>}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {formInputs}
+        <button
+          type="submit"
+          className="inline-flex justify-center px-3 py-2 ml-3 text-sm font-medium text-white bg-blue-500 border border-transparent shadow-sm rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          Submit
+        </button>
       </form>
-    </>
+    </Widget>
   );
 };
 

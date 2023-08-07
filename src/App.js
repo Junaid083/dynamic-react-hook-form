@@ -84,7 +84,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Form dynamicForm={dynamicForm} onSubmit={onSubmit}/>
+        <Form dynamicForm={dynamicForm} onSubmit={onSubmit} />
       </header>
     </div>
   );

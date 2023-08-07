@@ -3,7 +3,11 @@ import Widget from "./Widget";
 import { useForm, Controller } from "react-hook-form";
 
 const Form = () => {
-  const { control, handleSubmit } = useForm();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const dynamicForm = {
     firstName: {
       label: "First Name",
@@ -153,7 +157,7 @@ const Form = () => {
         return null;
     }
   };
-
+  const Error = ({ children }) => <p style={{ color: "red" }}>{children}</p>;
   return (
     <Widget title="React Hook Form" description={<span></span>}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -181,6 +185,7 @@ const Form = () => {
                         render={({ field }) => (
                           <div>
                             <Input type={type} {...field} {...item} />
+                            {errors[e] && <Error>This field is required</Error>}
                           </div>
                         )}
                       />
@@ -214,12 +219,15 @@ const Form = () => {
                         ))}
                       </select>
                     ) : (
-                      <Input
-                        type={type}
-                        options={options}
-                        {...field}
-                        {...dynamicForm[e]}
-                      />
+                      <>
+                        <Input
+                          type={type}
+                          options={options}
+                          {...field}
+                          {...dynamicForm[e]}
+                        />
+                        {errors[e] && <Error>This field is required</Error>}
+                      </>
                     )}
                   </div>
                 )}
